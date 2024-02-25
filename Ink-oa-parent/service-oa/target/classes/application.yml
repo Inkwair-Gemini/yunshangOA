@@ -1,0 +1,6 @@
+#引入文件application-dev.yml
+spring:
+  application:
+    name: service-oa
+  profiles:
+    active: dev

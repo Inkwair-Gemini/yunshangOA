@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no"/>
+  <title>NATAPP-内网穿透 基于ngrok的国内高速内网映射工具</title>
+  <meta name="keywords" content="内网穿透,ngrok,natapp,ngrok内网穿透,ngrok国内,ngrok内存泄漏,ngrok掉线,ngrok内网转发,内网穿透,微信开发,微信本地开发,nat映射">
+  <meta name="description" content="natapp是基于ngrok的国内高速内网穿透专业服务商,独家彻底解决ngrok1.7内存泄漏问题.稳定拒绝掉线,适用于微信开发调试,本地架设演示服务器,外网可以访问,远程服务器,远程桌面,远程办公,游戏联机等" />
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <!--[if lt IE 9]>
+  <script>
+    alert('请使用IE9以上,Edge,Chrome,FireFox等现代浏览器访问natapp');
+
+  </script>
+  <![endif]-->
+  <!-- Bootstrap framework -->
+
+
+  <link rel="stylesheet" href="https://cdn.natapp.cn/assets/bootstrap/css/bootstrap.min.css?version=20230407"/>
+
+  <link rel="stylesheet" href="https://cdn.natapp.cn/assets/lib/font-awesome/css/font-awesome.min.css?version=20230407">
+
+  <link rel="stylesheet" type="text/css" href="https://cdn.natapp.cn/assets/home/css/style.css?version=20230407">
+
+
+  <!-- favicon -->
+  <link rel="shortcut icon" href="https://cdn.natapp.cn/assets/favicon.ico?version=20230407"/>
+
+  <!-- hint.css -->
+  <link rel="stylesheet" href="https://cdn.natapp.cn/assets/lib/hint_css/hint.min.css?version=20230407"/>
+
+  <!-- aditional icons -->
+  <link rel="stylesheet" href="https://cdn.natapp.cn/assets/natapp/img/splashy/splashy.css?version=20230407"/>
+  <script src="https://cdn.natapp.cn/assets/lib/jquery-2.2.0.min.js?version=20230407"></script>
+
+
+</head>
+<body onload="init();">
+
+
+<style>
+  #download {
+    font-size: 16px;
+  }
+
+  .download-list {
+    margin-top: 18px;
+  }
+
+  .download-list li {
+    padding-top: 6px;
+    padding-bottom: 6px;
+    font-weight: bold;
+    border-bottom: solid 1px #9d9d9d;
+    font-size: 18px;
+
+  }
+
+  .download-list .tip {
+    font-size: 16px;
+    font-weight: normal;
+    color: grey;
+
+  }
+
+  .changelog {
+    font-size: 16px;
+  }
+
+  .navbar .divider-vertical {
+    border-left-color: #627530;
+    border-right-color: #80993f;
+  }
+
+  .navbar .brand {
+    width: 250px;
+    padding-bottom: 0;
+    padding-top: 0;
+    font: 100 18px/36px 'Microsoft YaHei', sans-serif;
+    text-decoration: none;
+    color: #fff;
+    text-shadow: none
+  }
+
+  .navbar .user_menu {
+    margin-left: 0
+  }
+
+  .navbar .user_menu .nb_boxes {
+    margin: 9px 0 0
+  }
+
+  .navbar .user_menu .nb_boxes .label {
+    background: transparent;
+    background: rgba(0, 0, 0, .2);
+    padding: 3px 4px
+  }
+
+  .navbar .user_menu .nb_boxes a {
+    cursor: pointer;
+    float: left;
+    margin-right: 8px
+  }
+
+  .navbar .user_menu .nb_boxes a:last-child {
+    margin: 0
+  }
+
+  .navbar .user_menu a.dropdown-toggle {
+    white-space: nowrap
+  }
+
+  .navbar .user_menu .user_avatar {
+    margin-right: 6px;
+    height: 20px
+  }
+
+  .natapp-warning {
+    border-color: #c23c22;
+    color: #c23c22;
+    font-size: 16px;
+  }
+
+  .gongan {
+    margin-top: -4px;
+    margin-right: 5px;
+    width: 14px;
+    height: 14px;
+  }
+
+  #news {
+    background-color: #f4f4f4;
+    padding-top: 60px;
+    padding-bottom: 60px;
+  }
+
+  .info-color-news {
+    color: #403d3d;
+  }
+
+  #news a {
+    color: black;
+  }
+
+  #news ul li {
+    margin-top: 12px;
+    font-size: 16px;
+  }
+
+  #news .date {
+    margin-top: 3px;
+    color: #908989;
+  }
+
+  #customers {
+    margin-top: 36px;
+    margin-bottom: 36px;
+  }
+
+  #customers li {
+    float: left;
+    width: 160px;
+  }
+
+  #customers li img {
+    height: 60px;
+  }
+
+
+  #ad-pannel {
+    margin-top: 36px;
+  }
+
+  #ad-pannel li {
+    margin-left: 50px;
+    float: left;
+    width: 220px;
+  }
+
+  #ad-pannel li img {
+    height: 90px;
+  }
+</style>
+
+<div id="header" class="container-fluid">
+  <div class="color-overlay accent-color-bg"></div>
+  <div class="container-fluid logo-menu">
+
+    <div class="container">
+      <div class="row">
+        <!-- navigation panel -->
+        <nav class="navbar  navbar-default navbar-fixed-top col-xs-12" role="navigation" id="myNav">
+
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#navbar-collapse-main">
+              <span class="sr-only">展开</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <div class="logo"><img src="https://cdn.natapp.cn/assets/natapp/img/logo.png?version=20230407"/></div>
+
+            <a class="navbar-brand" href="#">NATAPP.cn</a>
+
+          </div>
+
+          <div class="collapse navbar-collapse" id="navbar-collapse-main">
+            <ul class="nav user_menu navbar-nav navbar-right">
+              <li><a href="https://natapp.cn">首页</a></li>
+
+              <li><a href="https://natapp.cn#download">客户端下载</a></li>
+              <li><a href="https://natapp.cn/article">教程/文档</a></li>
+              <li><a href="https://natapp.cn#contact">联系</a></li>
+
+              <li class="divider-vertical hidden-sm hidden-xs"></li>
+              <li>
+                <a href="https://natapp.cn/login"> 登录 </a>
+
+              </li>
+              <li>
+                <a href="https://natapp.cn/register"> 免费注册 </a>
+
+              </li>
+
+            </ul>
+
+          </div><!-- /.navbar-collapse -->
+
+        </nav>
+
+      </div>
+    </div>
+  </div>
+
+
+  <div class="container">
+    <div class="row header-content">
+      <div class="col-xs-12 text-center">
+        <div class="header-text-1">
+          <div class="word">高效</div>
+        </div>
+        <div class="header-text-2">开启您的内网穿透之旅</div>
+        <div class="header-text-3">注册账号,下载客户端即可免费试用
+
+        </div>
+
+        <div class="signup-button"><a href="https://natapp.cn#download">立即下载</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="partners" class="container-fluid">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 row-title">
+
+        服务器更新:全面支持HTTPS协议以及本地SSL证书,支持WSS协议.同时支持HTTP/2 WEB协议,支持微信小程序本地开发.<br>
+        全面自动支持泛子域名与访客真实IP地址.
+
+
+      </div>
+      <div class="clear"></div>
+    </div>
+  </div>
+</div>
+<div id="features" class="container-fluid">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 row-title accent-color-text">NATAPP应用</div>
+    </div>
+    <div class="row feature-buttons-holder">
+      <div class="box3d">
+        <div class="box3d-top box3d-part accent-color-bg"></div>
+        <div class="box3d-left box3d-part accent-color-bg"></div>
+        <div class="box3d-right box3d-part accent-color-bg"></div>
+      </div>
+      <div class="feature-button feature1 color1-bg inside-box-left" data-num="1">
+        <div class="feature-icon"><i class="fa  fa-weixin fa-3" aria-hidden="true"></i></div>
+        <div class="feature-title">微信/手机App本地开发调试</div>
+        <div class="feature-line color1-border feature-line-hide"></div>
+        <div class="feature-star fa fa-star color1 feature-star-hide"></div>
+      </div>
+      <div class="feature-button feature2 color2-bg inside-box-left" data-num="2">
+        <div class="feature-icon"><i class="fa fa-cloud fa-3" aria-hidden="true"></i></div>
+        <div class="feature-title">快速项目Demo演示</div>
+        <div class="feature-line color2-border feature-line-hide"></div>
+        <div class="feature-star fa fa-star color2 feature-star-hide"></div>
+      </div>
+      <div class="feature-button feature3 color3-bg inside-box-right" data-num="3">
+        <div class="feature-icon"><i class="fa fa-link fa-3" aria-hidden="true"></i></div>
+        <div class="feature-title">TCP/UDP转发,连接能想象的一切</div>
+        <div class="feature-line color3-border feature-line-hide"></div>
+        <div class="feature-star fa fa-star color3 feature-star-hide"></div>
+      </div>
+      <div class="feature-button feature4 color4-bg inside-box-right" data-num="4">
+        <div class="feature-icon"><i class="fa fa-bolt fa-3" aria-hidden="true"></i></div>
+        <div class="feature-title">穿透防火墙</div>
+        <div class="feature-line color4-border feature-line-hide"></div>
+        <div class="feature-star fa fa-star color4 feature-star-hide"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="feature-details1" class="container-fluid f-details color1-bg hide-f-details">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="feature-icon"><i class="fa  fa-weixin fa-3" aria-hidden="true"></i></div>
+        <div class="feature-title">微信/手机App本地开发调试</div>
+        <div class="feature-text">
+          在微信公众平台里设置NATAPP提供的隧道网址http://yourapp.xxx.natapp.cn,本机可以接收到微信服务器的传送的信息,实现完全实时的本地开发调试.
+          <br>
+          手机同理,可与本机PC实时调试开发<br><br>
+          教程: <a href="https://natapp.cn/article/wechat_local_debug">用Natapp(ngrok)进行微信本地开发调试</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="feature-details2" class="container-fluid f-details color2-bg hide-f-details">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="feature-icon"><i class="fa fa-cloud fa-3" aria-hidden="true"></i></div>
+        <div class="feature-title">快速项目Demo演示</div>
+        <div class="feature-text"> 本地web
+          demo,可以直接通过NATAPP提供的隧道网址(http://yourapp.xxx.natapp.cn)访问,免去部署服务器等繁琐步骤,得到客户快速反馈,快速修改
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="feature-details3" class="container-fluid f-details color3-bg hide-f-details">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="feature-icon"><i class="fa fa-link fa-3" aria-hidden="true"></i></div>
+        <div class="feature-title">TCP/UDP转发,连接能想象的一切</div>
+        <div class="feature-text"> 可实现远程登录内网SSH,远程桌面,数据库,企业应用,FTP,游戏等等,任您想象...
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="feature-details4" class="container-fluid f-details color4-bg hide-f-details">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="feature-icon"><i class="fa fa-bolt fa-3" aria-hidden="true"></i></div>
+        <div class="feature-title">穿透防火墙</div>
+        <div class="feature-text">只要本机能上网,就能穿透防火墙,提供服务!
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="pricing" class="container-fluid">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 row-title accent-color-text">服务价格</div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 row-sub-title accent-color-text">
+        不同方案总有一款适合您
+      </div>
+    </div>
+    <div class="row">
+
+      <div class="col-md-3 col-sm-6 price-column">
+        <div class="price-table">
+          <div class="price-top-bar">
+            <div class="pbar color2-bg"></div>
+            <div class="diamond">
+              <div class="diamond-back">
+                <div class="color2-bg"></div>
+              </div>
+              <div class="diamond-top">
+                <div class="color2-bg"></div>
+              </div>
+              <div class="diamond-bottom">
+                <div class="color2-bg"></div>
+              </div>
+            </div>
+          </div>
+          <div class="price-title color2-bg">免费隧道(注册用户)</div>
+          <div class="price accent-color-text">
+            <span class="currency"></span>
+            <span class="monthly-num">完全免费</span>
+            <span class="monthly-obj"></span>
+          </div>
+          <div class="duration accent-color-text">
+
+          </div>
+          提供http,tcp,udp全隧道穿透
+          <div class="sp"></div>
+          随机域名/随机TCP,UDP端口
+          <div class="sp"></div>
+          不定时强制更换域名/端口
+          <div class="sp"></div>
+          自定义本地端口
+
+          <div class="sp"></div>
+
+
+          &nbsp;<br>
+
+
+          <a href="https://natapp.cn/register" class="price-btn">
+            <div class="signup-button accent-color-bg">立即注册</div>
+          </a>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6 price-column">
+        <div class="price-table">
+          <div class="price-top-bar">
+            <div class="pbar color3-bg"></div>
+            <div class="diamond">
+              <div class="diamond-back">
+                <div class="color3-bg"></div>
+              </div>
+              <div class="diamond-top">
+                <div class="color3-bg"></div>
+              </div>
+              <div class="diamond-bottom">
+                <div class="color3-bg"></div>
+              </div>
+            </div>
+          </div>
+          <div class="price-title color3-bg">VIP_1型隧道</div>
+          <div class="price accent-color-text">
+            <span class="currency">¥</span>
+            <span class="monthly-num">9</span>
+            <span class="monthly-obj">元/月</span>
+          </div>
+          <div class="duration accent-color-text">
+
+          </div>
+          提供http,https,tcp全隧道穿透
+          <div class="sp"></div>
+          自定义子域名/TCP端口
+          <div class="sp"></div>
+          服务期间永久固定
+          <div class="sp"></div>
+          自定义本地端口
+          <div class="sp"></div>
+          绑定自主域名
+
+          <div class="sp"></div>
+          HTTPS泛域名及本地SSL证书
+          <div class="sp"></div>
+          &nbsp;<br>
+
+          <a href="https://natapp.cn/tunnel/buy" class="price-btn">
+            <div class="signup-button accent-color-bg">立即购买</div>
+          </a>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6 price-column">
+        <div class="price-table">
+          <div class="price-top-bar">
+            <div class="pbar color3-bg"></div>
+            <div class="diamond">
+              <div class="diamond-back">
+                <div class="color3-bg"></div>
+              </div>
+              <div class="diamond-top">
+                <div class="color3-bg"></div>
+              </div>
+              <div class="diamond-bottom">
+                <div class="color3-bg"></div>
+              </div>
+            </div>
+          </div>
+          <div class="price-title color3-bg">VIP_2型隧道</div>
+          <div class="price accent-color-text">
+            <span class="currency">¥</span>
+            <span class="monthly-num">10</span>
+            <span class="monthly-obj">元/月</span>
+          </div>
+          <div class="duration accent-color-text">
+            100M带宽 流量计费,1.1元/G
+          </div>
+          提供http,https,tcp全隧道穿透
+          <div class="sp"></div>
+          自定义子域名/TCP端口
+          <div class="sp"></div>
+          服务期间永久固定
+          <div class="sp"></div>
+          自定义本地端口
+          <div class="sp"></div>
+          绑定自主域名
+          <div class="sp"></div>
+          &nbsp;HTTPS泛域名及本地SSL证书
+          <div class="sp"></div>
+          &nbsp;<br>
+
+          <a href="https://natapp.cn/tunnel/buy" class="price-btn">
+            <div class="signup-button accent-color-bg">立即购买</div>
+          </a>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6 price-column">
+        <div class="price-table">
+          <div class="price-top-bar">
+            <div class="pbar color3-bg"></div>
+            <div class="diamond">
+              <div class="diamond-back">
+                <div class="color3-bg"></div>
+              </div>
+              <div class="diamond-top">
+                <div class="color3-bg"></div>
+              </div>
+              <div class="diamond-bottom">
+                <div class="color3-bg"></div>
+              </div>
+            </div>
+          </div>
+          <div class="price-title color3-bg">VIP_3型TCP隧道</div>
+          <div class="price accent-color-text">
+            <span class="currency">¥</span>
+            <span class="monthly-num">12</span>
+            <span class="monthly-obj">元/月</span>
+          </div>
+          <div class="duration accent-color-text">
+            高防,不限流量<br>
+            电信/联通/移动三线
+          </div>
+          提供tcp/udp隧道穿透
+          <div class="sp"></div>
+          自定义子域名/TCP端口
+          <div class="sp"></div>
+          服务期间永久固定
+          <div class="sp"></div>
+          自定义本地端口
+          <div class="sp"></div>
+          绑定自主域名
+          <div class="sp"> &nbsp;</div>
+
+
+          &nbsp;<br>
+
+          <a href="https://natapp.cn/tunnel/buy" class="price-btn">
+            <div class="signup-button accent-color-bg">立即购买</div>
+          </a>
+        </div>
+      </div>
+
+
+      <div class="col-md-3 col-sm-6 price-column">
+        <div class="price-table">
+          <div class="price-top-bar">
+            <div class="pbar color3-bg"></div>
+            <div class="diamond">
+              <div class="diamond-back">
+                <div class="color3-bg"></div>
+              </div>
+              <div class="diamond-top">
+                <div class="color3-bg"></div>
+              </div>
+              <div class="diamond-bottom">
+                <div class="color3-bg"></div>
+              </div>
+            </div>
+          </div>
+          <div class="price-title color3-bg">VIP_3型隧道(Web)</div>
+          <div class="price accent-color-text">
+            <span class="currency">¥</span>
+            <span class="monthly-num">12</span>
+            <span class="monthly-obj">元/月</span>
+          </div>
+          <div class="duration accent-color-text">
+            香港服务器,无需备案CN2与大陆直连
+          </div>
+          提供http,https隧道
+          <div class="sp"></div>
+          自定义子域名
+          <div class="sp"></div>
+          服务期间永久固定
+
+          <div class="sp"></div>
+          绑定自主域名
+
+          <div class="sp"></div>
+          HTTPS泛域名及本地SSL证书
+          <div class="sp"></div>
+          &nbsp;<br>
+
+          <a href="https://natapp.cn/tunnel/buy" class="price-btn">
+            <div class="signup-button accent-color-bg">立即购买</div>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-sm-6 price-column">
+        <div class="price-table">
+          <div class="price-top-bar">
+            <div class="pbar color3-bg"></div>
+            <div class="diamond">
+              <div class="diamond-back">
+                <div class="color3-bg"></div>
+              </div>
+              <div class="diamond-top">
+                <div class="color3-bg"></div>
+              </div>
+              <div class="diamond-bottom">
+                <div class="color3-bg"></div>
+              </div>
+            </div>
+          </div>
+          <div class="price-title color3-bg">HK_1型隧道</div>
+          <div class="price accent-color-text">
+            <span class="currency">¥</span>
+            <span class="monthly-num">10</span>
+            <span class="monthly-obj">元/月</span>
+          </div>
+          <div class="duration accent-color-text">
+            100M带宽 流量计费,1.3元/G<br>
+            香港服务器,无需备案
+          </div>
+          提供http,https,tcp全隧道穿透
+          <div class="sp"></div>
+          自定义子域名/TCP端口
+          <div class="sp"></div>
+          服务期间永久固定
+          <div class="sp"></div>
+          自定义本地端口
+          <div class="sp"></div>
+          绑定自主域名
+
+          <div class="sp"></div>
+          HTTPS泛域名及本地SSL证书
+          <div class="sp"></div>
+          &nbsp;<br>
+
+          <a href="https://natapp.cn/tunnel/buy" class="price-btn">
+            <div class="signup-button accent-color-bg">立即购买</div>
+          </a>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6 price-column">
+        <div class="price-table">
+          <div class="price-top-bar">
+            <div class="pbar color3-bg"></div>
+            <div class="diamond">
+              <div class="diamond-back">
+                <div class="color3-bg"></div>
+              </div>
+              <div class="diamond-top">
+                <div class="color3-bg"></div>
+              </div>
+              <div class="diamond-bottom">
+                <div class="color3-bg"></div>
+              </div>
+            </div>
+          </div>
+          <div class="price-title color3-bg">HK_2型隧道</div>
+          <div class="price accent-color-text">
+            <span class="currency">¥</span>
+            <span class="monthly-num">10</span>
+            <span class="monthly-obj">元/月</span>
+          </div>
+          <div class="duration accent-color-text">
+
+            香港服务器,无需备案,CN2与大陆直连,速度与国内服务器基本无异
+          </div>
+          提供http,tcp隧道穿透
+          <div class="sp"></div>
+          自定义子域名/TCP端口
+          <div class="sp"></div>
+          服务期间永久固定
+          <div class="sp"></div>
+          自定义本地端口
+          <div class="sp"></div>
+          绑定自主域名
+
+          <div class="sp"></div>
+
+          <div class="sp"></div>
+          &nbsp;<br>
+
+          <a href="https://natapp.cn/tunnel/buy" class="price-btn">
+            <div class="signup-button accent-color-bg">立即购买</div>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div id="info1" class="container-fluid info">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 info-text">
+        <h2 class="info-color1">国内的阿里云BGP多线机房</h2>
+        <ul class="fa-ul">
+          <li>
+            <i class="fa-li fa fa-circle-thin info-color1"><i class="fa fa-check info-color1"></i></i>所有数据均由服务器中转,因此服务器/机房的速度很大程度上决定隧道穿透的速度
+          </li>
+          <li><i class="fa-li fa fa-circle-thin info-color1"><i class="fa fa-check info-color1"></i></i>
+            我们会根据用户数,弹性及时增加服务器的配置与带宽,保证性能与稳定
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-4 info-image">
+        <img src="https://cdn.natapp.cn/assets/home/images/52348858ace00.jpg?version=20230407" alt="">
+      </div>
+    </div>
+  </div>
+</div>
+<div id="info2" class="container-fluid info">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 info-image">
+        <img src="https://cdn.natapp.cn/assets/home/images/tls.jpg?version=20230407" alt="">
+      </div>
+      <div class="col-md-8 info-text">
+        <h2 class="info-color2">全程TLS数据加密传输,安全无忧</h2>
+        <ul class="fa-ul">
+          <li><i class="fa-li fa fa-circle-thin info-color2"><i class="fa fa-check info-color2"></i></i>全程双向数据经过最先进、最安全的TLS
+            v1.2 加密
+          </li>
+          <li><i class="fa-li fa fa-circle-thin info-color2"><i class="fa fa-check info-color2"></i></i>
+            完全无法截取或伪造数据,保证安全传输
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="info3" class="container-fluid info">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 info-text">
+        <h2 class="info-color3">Ngrok全面升级</h2>
+        <ul class="fa-ul">
+          <li><i class="fa-li fa fa-circle-thin info-color3"><i class="fa fa-check info-color3"></i></i>云端管理,更简单,直观,且确保域名/端口不会冲突,杜绝安全隐患
+          </li>
+          <li><i class="fa-li fa fa-circle-thin info-color3"><i class="fa fa-check info-color3"></i></i>解决ngrok1.7版内存泄漏,不再有掉线困扰
+          </li>
+          <li><i class="fa-li fa fa-circle-thin info-color3"><i class="fa fa-check info-color3"></i></i>国内VIP服务器速度更快,坚若磐石的稳定
+          </li>
+
+        </ul>
+      </div>
+      <div class="col-md-4 info-image">
+        <img src="https://cdn.natapp.cn/assets/home/images/info3.jpg?version=20230407" alt="">
+      </div>
+    </div>
+  </div>
+</div>
+<div id="download" class="container-fluid info">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <h2 class="info-color1"><span class="glyphicon glyphicon-cloud-download"></span> 客户端下载 </h2>
+
+
+        <h3 class="info-color1">版本: 2.3.9 <a
+                href="https://natapp.cn/article/changelog" class="changelog">更新日志</a></h3>
+
+        <ul class="list-unstyled download-list">
+          <li class="row">
+            <div class="col-sm-4 ">Windows <span class="tip"></span></div>
+            <div class="col-sm-8 ">
+              <a href="https://cdn.natapp.cn/assets/downloads/clients/2_3_9/natapp_windows_386_2_3_9.zip?version=20230407"
+                 class="btn btn-green btn-sm hint--bottom hint--info"
+                 data-hint="md5:129afb652730ad86cb94cdb42b947398"><span
+                      class="glyphicon glyphicon-cloud-download"></span> 32位
+              </a>
+
+
+              <a href="https://cdn.natapp.cn/assets/downloads/clients/2_3_9/natapp_windows_amd64_2_3_9.zip?version=20230407"
+                 class="btn btn-green btn-sm hint--bottom hint--info"
+                 data-hint="md5:fe3049bb368be3e9b8e9a85167129570"><span
+                      class="glyphicon glyphicon-cloud-download"></span> 64位
+              </a>
+
+
+              <a href="https://cdn.natapp.cn/assets/downloads/clients/windowsxp/natapp_windows_xp_2_3_9.zip?version=20230407"
+                 class="btn btn-green btn-sm hint--bottom hint--info"
+                 data-hint="md5:129afb652730ad86cb94cdb42b947398"><span
+                      class="glyphicon glyphicon-cloud-download"></span> 老版本windows
+              </a>
+
+
+            </div>
+
+          </li>
+
+          <li class="row">
+            <div class="col-sm-4 ">Mac OS X <span class="tip"></span></div>
+            <div class="col-sm-8 ">
+              <a href="https://cdn.natapp.cn/assets/downloads/clients/2_3_9/natapp_darwin_386_2_3_9.zip?version=20230407"
+                 class="btn btn-green btn-sm hint--bottom hint--info"
+                 data-hint="md5:99809d7af031918d2cf36417700e54ad"><span
+                      class="glyphicon glyphicon-cloud-download"></span> 32位
+              </a>
+
+
+              <a href="https://cdn.natapp.cn/assets/downloads/clients/2_3_9/natapp_darwin_amd64_2_3_9.zip?version=20230407"
+                 class="btn btn-green btn-sm hint--bottom hint--info"
+                 data-hint="md5:31ce751213c344a3df148e65c5e51994"><span
+                      class="glyphicon glyphicon-cloud-download"></span> 64位
+              </a>
+
+
+              <a href="https://cdn.natapp.cn/assets/downloads/clients/2_3_9/natapp_darwin_arm64_2_3_9.zip?version=20230407"
+                 class="btn btn-green btn-sm hint--bottom hint--info"
+                 data-hint="md5:59521414a32c92886f7a3d6367636769"><span
+                      class="glyphicon glyphicon-cloud-download"></span> ARM64
+              </a>
+
+
+            </div>
+
+          </li>
+
+          <li class="row">
+            <div class="col-sm-4 ">Linux <span class="tip"></span></div>
+            <div class="col-sm-8 ">
+              <a href="https://cdn.natapp.cn/assets/downloads/clients/2_3_9/natapp_linux_386/natapp?version=20230407"
+                 class="btn btn-green btn-sm hint--bottom hint--info"
+                 data-hint="md5:1237f6c9f93accc8134a72bb60b98ee1"><span
+                      class="glyphicon glyphicon-cloud-download"></span> 32位
+              </a>
+
+
+              <a href="https://cdn.natapp.cn/assets/downloads/clients/2_3_9/natapp_linux_amd64/natapp?version=20230407"
+                 class="btn btn-green btn-sm hint--bottom hint--info"
+                 data-hint="md5:e31e634d902d71c56710b52d8083be62"><span
+                      class="glyphicon glyphicon-cloud-download"></span> 64位
+              </a>
+
+
+            </div>
+
+          </li>
+
+          <li class="row">
+            <div class="col-sm-4 ">Linux/ARM <span class="tip">树莓派请下载32位</span></div>
+            <div class="col-sm-8 ">
+              <a href="https://cdn.natapp.cn/assets/downloads/clients/2_3_9/natapp_linux_arm/natapp?version=20230407"
+                 class="btn btn-green btn-sm hint--bottom hint--info"
+                 data-hint="md5:5d25cf3ed780c0dd56ec17aefb1eefd7"><span
+                      class="glyphicon glyphicon-cloud-download"></span> 32位
+              </a>
+
+
+              <a href="https://cdn.natapp.cn/assets/downloads/clients/2_3_9/natapp_linux_arm64/natapp?version=20230407"
+                 class="btn btn-green btn-sm hint--bottom hint--info"
+                 data-hint="md5:e6f09eb4a284605d6ffbf9cbc7163175"><span
+                      class="glyphicon glyphicon-cloud-download"></span> 64位
+              </a>
+
+
+            </div>
+
+          </li>
+
+          <li class="row">
+            <div class="col-sm-4 ">Linux/MIPS(LE) <span class="tip">绝大部分路由器</span></div>
+            <div class="col-sm-8 ">
+              <a href="https://cdn.natapp.cn/assets/downloads/clients/2_3_9/natapp_linux_mips_compress/natapp?version=20230407"
+                 class="btn btn-green btn-sm hint--bottom hint--info"
+                 data-hint="md5:db08705f408852e7f24096293c883ce0"><span
+                      class="glyphicon glyphicon-cloud-download"></span> 32位
+              </a>
+
+
+              <a href="https://cdn.natapp.cn/assets/downloads/clients/2_3_9/natapp_linux_mipsle_compress/natapp?version=20230407"
+                 class="btn btn-green btn-sm hint--bottom hint--info"
+                 data-hint="md5:d790cb33b89bbd2b670ed2ddb53f9abc"><span
+                      class="glyphicon glyphicon-cloud-download"></span> LE 32位
+              </a>
+
+
+              <a href="https://cdn.natapp.cn/assets/downloads/clients/2_3_9/natapp_linux_mipsle_sf_compress/natapp?version=20230407"
+                 class="btn btn-green btn-sm hint--bottom hint--info"
+                 data-hint="md5:a073310ef1c314a5fc6250c33825691e"><span
+                      class="glyphicon glyphicon-cloud-download"></span> LE MT7688
+              </a>
+
+
+              <a href="https://cdn.natapp.cn/assets/downloads/clients/2_3_9/natapp_linux_mips64le/natapp?version=20230407"
+                 class="btn btn-green btn-sm hint--bottom hint--info"
+                 data-hint="md5:73925cb312151abdaad641caf1244669"><span
+                      class="glyphicon glyphicon-cloud-download"></span> LE 64位
+              </a>
+
+
+            </div>
+
+          </li>
+
+
+          <div class="row" style="margin-top: 8px" id="download-more">
+            <div class="col-sm-12 ">
+              <button
+                      class="btn btn-green btn-sm " onclick="showDownloadsOther()"><span
+                      class="glyphicon glyphicon-list"></span> 更多平台客户端
+              </button>
+            </div>
+          </div>
+          <li class="row downloads-other" style="display:none">
+            <div class="col-sm-4 ">FreeBSD <span class="tip"></span></div>
+            <div class="col-sm-8 ">
+              <a href="https://cdn.natapp.cn/assets/downloads/clients/2_3_9/natapp_freebsd_386/natapp?version=20230407"
+                 class="btn btn-green btn-sm hint--bottom hint--info"
+                 data-hint="md5:50da8fda746e91259135265e37916685"><span
+                      class="glyphicon glyphicon-cloud-download"></span> 32位
+              </a>
+
+
+              <a href="https://cdn.natapp.cn/assets/downloads/clients/2_3_9/natapp_freebsd_amd64/natapp?version=20230407"
+                 class="btn btn-green btn-sm hint--bottom hint--info"
+                 data-hint="md5:52ffbd86d88695f86ae072b93bc4d0c6"><span
+                      class="glyphicon glyphicon-cloud-download"></span> 64位
+              </a>
+
+
+            </div>
+
+          </li>
+
+        </ul>
+
+        <p>大部分64位操作系统兼容32位的natapp,所以不清楚的同学下载32位的即可</p>
+
+        <p>如何使用?请参考 <a href="https://natapp.cn/article/natapp_newbie" target="_blank">1分钟快速新手图文教程</a></p>
+        <p>兼容ngrokc公版插件使用说明 <a href="https://natapp.cn/article/ngrokc" target="_blank">详见</a></p>
+        <p>另附 <a href="https://natapp.cn/article/php">natapp-php客户端下载&使用说明</a></p>
+
+
+      </div>
+
+    </div>
+  </div>
+</div>
+<div id="news" class="container-fluid info">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8">
+        <h2 class="info-color-news"><i class="fa fa-newspaper-o" aria-hidden="true"></i> 动态资讯</h2>
+        <ul class="fa-ul">
+          <li><a href="https://natapp.cn/news/30">万众一心，众志成城,NATAPP与你共同抗击疫情活动</a>
+            <div class="date">[2020年02月22日]</div>
+          </li>
+
+          <li><a href="https://natapp.cn/news/26">我司获得国内互联网虚拟专用网业务许可证</a>
+            <div class="date">[2019年07月24日]</div>
+          </li>
+
+          <li><a href="https://natapp.cn/news/20">关于遭遇DDOS攻击,解决方案</a>
+            <div class="date">[2016年12月15日]</div>
+          </li>
+
+          <li><a href="https://natapp.cn/news/17">关于近期natapp遭遇DDOS攻击情况说明以及客户补偿方案</a>
+            <div class="date">[2016年10月20日]</div>
+          </li>
+
+          <li><a href="https://natapp.cn/news/16">支持https泛域名以及本地(443端口)证书,支持http/2协议</a>
+            <div class="date">[2016年10月13日]</div>
+          </li>
+
+
+        </ul>
+        <div class="text-right"><a href="https://natapp.cn/news">更多</a></div>
+      </div>
+      <div class="col-md-4 info-image">
+
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12 message-icon-holder">
+        <ul class="fa-ul " id="ad-pannel">
+
+          <li>
+            <img src="https://cdn.natapp.cn/assets/natapp/img/adrental.jpg?version=20230407" alt="">
+
+
+          </li>
+          <li>
+            <img src="https://cdn.natapp.cn/assets/natapp/img/adrental.jpg?version=20230407" alt="">
+          </li>
+          <li>
+            <img src="https://cdn.natapp.cn/assets/natapp/img/adrental.jpg?version=20230407" alt="">
+          </li>
+          <li>
+            <img src="https://cdn.natapp.cn/assets/natapp/img/adrental.jpg?version=20230407" alt="">
+          </li>
+
+        </ul>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12 message-icon-holder">
+        <h2 class="info-color-news"><i class="fa fa-tag" aria-hidden="true"></i> 我们的用户</h2>
+        <ul class="fa-ul " id="customers">
+
+          <li>
+            <img src="https://cdn.natapp.cn/assets/natapp/img/customers/zybx.png?version=20230407" alt="">
+
+          </li>
+          <li>
+            <img src="https://cdn.natapp.cn/assets/natapp/img/customers/nrjt.png?version=20230407" alt="">
+
+          </li>
+          <li>
+            <img src="https://cdn.natapp.cn/assets/natapp/img/customers/nykxy.png?version=20230407" alt="">
+
+          </li>
+          <li>
+            <img src="https://cdn.natapp.cn/assets/natapp/img/customers/gzkt.png?version=20230407" alt="">
+
+          </li>
+          <li style="margin-right: 20px">
+            <a href="https://www.imooc.com/t/4559066" target="_blank"><img
+                    src="https://cdn.natapp.cn/assets/natapp/img/customers/mkw.jpg?version=20230407" alt=""                                       style="width: 160px"></a>
+
+          </li>
+          <li>
+            <img src="https://cdn.natapp.cn/assets/natapp/img/customers/timg.jpg?version=20230407" alt="">
+
+          </li>
+        </ul>
+
+      </div>
+      <a style="float:right" href="https://natapp.cn/customers">..更多</a>
+    </div>
+  </div>
+</div>
+<div id="testimonials" class="container-fluid">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 message-icon-holder">
+        <div class="message-icon">
+          <div class="message-icon-body accent-color-bg">...</div>
+          <div class="message-icon-arrow accent-color-border"></div>
+        </div>
+      </div>
+      <div class="col-xs-12 testimonial-text-holder">
+        <div class="testimonial-text t1 accent-color-text">
+          <p>微信开发实在是太方便了,没想到下个这个小程序直接就能本地调试了,赞! </p>
+        </div>
+        <div class="testimonial-text t2 accent-color-text testimonial-text-hide">
+          <p>给客户开发Web项目,快速演示,服务器部署完全没必要了,修改什么之类的都很方便.<br>ps 在线支付网关也可以用这个本地实时开发哦!</p>
+        </div>
+        <div class="testimonial-text t3 accent-color-text testimonial-text-hide">
+          <p>树莓派上应用,在外面实时监控家里的情况,Natapp提供的服务,使整个过程方便了许多</p>
+        </div>
+        <div class="testimonial-text t4 accent-color-text testimonial-text-hide">
+          <p>和基友们一起联网撸游戏,太方便了~~</p>
+        </div>
+      </div>
+      <div class="col-xs-12">
+
+        <div class="people-slider">
+          <div class="person-details person-details-show " data-num="1">
+            <div class="person-image-holder">
+              <img class="person-image" src="https://cdn.natapp.cn/assets/home/images/people/1.jpg?version=20230407" alt="">
+            </div>
+            <div class="person-details-holder">
+              <div class="person-name">廖师兄</div>
+              <div class="person-title"></div>
+            </div>
+          </div>
+          <div class="person-details" data-num="2">
+            <div class="person-image-holder">
+              <img class="person-image" src="https://cdn.natapp.cn/assets/home/images/people/2.jpg?version=20230407" alt="">
+            </div>
+            <div class="person-details-holder">
+              <div class="person-name">清风原影</div>
+              <div class="person-title"></div>
+            </div>
+          </div>
+          <div class="person-details" data-num="3">
+            <div class="person-image-holder">
+              <img class="person-image" src="https://cdn.natapp.cn/assets/home/images/people/3.jpg?version=20230407" alt="">
+            </div>
+            <div class="person-details-holder">
+              <div class="person-name">Jane Doe</div>
+              <div class="person-title"></div>
+            </div>
+          </div>
+          <div class="person-details" data-num="4">
+            <div class="person-image-holder">
+              <img class="person-image" src="https://cdn.natapp.cn/assets/home/images/people/4.jpg?version=20230407" alt="">
+            </div>
+            <div class="person-details-holder">
+              <div class="person-name">天下暗箭</div>
+              <div class="person-title"></div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 row-title">
+      <section>
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more">分享到：</a>
+
+
+          <a href="#"
+             class="bds_qzone"
+             data-cmd="qzone"
+             title="分享到QQ空间">QQ空间</a><a
+                  href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博">新浪微博</a><a href="#"
+                                                                                                    class="bds_tqq"
+                                                                                                    data-cmd="tqq"
+                                                                                                    title="分享到腾讯微博">腾讯微博</a><a
+                  href="#" class="bds_renren" data-cmd="renren" title="分享到人人网">人人网</a><a href="#"
+                                                                                                  class="bds_weixin"
+                                                                                                  data-cmd="weixin"
+                                                                                                  title="分享到微信">微信</a>
+        </div>
+
+      </section>
+    </div>
+  </div>
+</div>
+<div id="contact" class="container-fluid accent-color-bg">
+  <div class="container">
+
+    <div class="row">
+      <div class="col-md-4">
+        <dl class="about">
+          <dt class="row-title">&nbsp;</dt>
+          <dd>
+            <a href="https://natapp.cn/article/about">关于我们</a>
+          </dd>
+          <dd><a href="https://natapp.cn/article/serviceagreement">服务协议</a></dd>
+          <dd><a href="https://natapp.cn/article/serviceagreement_newbie">服务协议(通俗版)</a></dd>
+        </dl>
+
+
+      </div>
+      <div class="col-md-4">
+        <dl>
+          <dt class="row-title">联系我们</dt>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          <dd>Email : <a href="mailto:support@mail.natapp.cn">support@mail.natapp.cn</a></dd>
+          <dd>(售后邮件工单,请注明账号,网址,错误信息截图等)</dd>
+
+        </dl>
+
+
+      </div>
+      <div class="col-md-4">
+        <dl style="margin-top: 240px;">
+          <dt class="row-title"></dt>
+          <dd>
+            国内互联网虚拟专用网业务许可证 B1-20192113
+          </dd>
+          <dd>
+            增值电信业务经营许可证 川B2-20170287
+          </dd>
+          <dd>
+            网站备案 <a href="http://beian.miit.gov.cn" target="_blank">蜀ICP备15024986号-2</a>
+          </dd>
+          <dd>
+            <img class="gongan"
+                 src="https://cdn.natapp.cn/assets/home/images/gongan.png?version=20230407"
+                 alt=""> 川公网安备 51019002000549号
+          </dd>
+        </dl>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+
+<!-- main bootstrap js -->
+<script src="https://cdn.natapp.cn/assets/bootstrap/js/bootstrap.min.js?version=20230407"></script>
+<!-- bootstrap plugins -->
+<!-- <script src="https://cdn.natapp.cn/assets/admin/js/bootstrap.plugins.min.js?version=20230407"></script> -->
+
+<script src="https://cdn.natapp.cn/assets/lib/clipboard/dist/clipboard.min.js?version=20230407"></script>
+<script src="https://cdn.natapp.cn/assets/js/st_global.js?version=20230407"></script>
+<script src="https://cdn.natapp.cn/assets/js/st_tools.js?version=20230407"></script>
+
+<script src="https://cdn.natapp.cn/assets/home/js/main.js?version=20230407"></script>
+
+<script>
+
+  var APP_LOCALE = "zh_CN";
+  var cdnUrl = 'https://cdn.natapp.cn/';
+  var csrf_token = 'FKC243xwuVM5qQfo7SufalddhcWWKGnuEDab4fZY';
+  $(document).ready(function () {
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': 'FKC243xwuVM5qQfo7SufalddhcWWKGnuEDab4fZY'
+      }
+    });
+
+
+    //* jQuery.browser.mobile (http://detectmobilebrowser.com/)
+    //* jQuery.browser.mobile will be true if the browser is a mobile device
+//        (function(a){jQuery.browser.mobile=/android.+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|e\-|e\/|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(di|rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|xda(\-|2|g)|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))})(navigator.userAgent||navigator.vendor||window.opera);
+//        //replace themeforest iframe
+//        if(jQuery.browser.mobile) {
+//            if (top !== self) top.location.href = self.location.href;
+//        }
+  });
+
+
+</script>
+<script>
+  window._bd_share_config = {
+    "common": {
+      "bdSnsKey": {},
+      "bdText": "",
+      "bdMini": "2",
+      "bdMiniList": false,
+      "bdPic": "",
+      "bdStyle": "0",
+      "bdSize": "16"
+    },
+    "share": {"bdSize": 16}
+  };
+  with (document)0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'https://cdn.natapp.cn/assets/bdshare/static/api/js/share.js?version=20230407'];
+</script>
+<!--lang files-->
+
+
+
+
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?3d235905d4eee5181db4512032726ce6";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>
+
+
+
+<script>
+  function showDownloadsOther() {
+    $('#download-more').hide();
+    $('.downloads-other').show();
+  }
+
+  $(function () {
+
+  });
+</script>
+
+</body>
+</html>
